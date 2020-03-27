@@ -1,0 +1,12 @@
+.map-container {
+    height: 100%;
+}
+
+.placeholder {
+    display: flex;
+    height: 100%;
+    background-color: darkgray;
+    .placeholder-text {
+        margin: auto;
+    }
+}
