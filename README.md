@@ -128,6 +128,7 @@ export class MyMapComponent implements OnInit, AfterViewInit {
 }
 ```
 **You will need to restart the dev server to apply changes from angular.json.**
+
 4. Remove the placeholder element from MyMapComponent and create a Mapbox GL map:
 ```html
 <div class="map-container" #map></div>
@@ -187,13 +188,13 @@ export class MyMapComponent implements OnInit, AfterViewInit {
 
 # STEP 2 - Option 3. Display a map with [OpenLayers](https://openlayers.org)
 1. Go to the application directory.
-2. Run `npm install ol ol-mapbox-style` to install OpenLayers library and Mapbox map style support.
+2. Run `npm install ol ol-mapbox-style @types/openlayers` to install OpenLayers library + Typescript types and Mapbox map style support.
 
 
 
 
 
-3. Add Leaflet and Mapbox GL styles. For example, in angular.json:
+3. Add OpenLayers styles. For example, in angular.json:
 ```json
 "projects": {
     "angular-project": {
@@ -204,8 +205,7 @@ export class MyMapComponent implements OnInit, AfterViewInit {
             ...
             "styles": [
               "src/styles.scss",
-              "node_modules/mapbox-gl/dist/mapbox-gl.css",
-              "node_modules/leaflet/dist/leaflet.css"
+              "node_modules/ol/ol.css"
             ],
             "scripts": []
           },
@@ -216,18 +216,50 @@ export class MyMapComponent implements OnInit, AfterViewInit {
 }
 ```
 **You will need to restart the dev server to apply changes from angular.json.**
+
 4. Remove the placeholder element from MyMapComponent and create a Mapbox GL map:
 ```html
 <div class="map-container" #map></div>
 ```
 ```typescript
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Map } from 'openlayers';
+import olms from 'ol-mapbox-style';
+import * as proj from 'ol/proj';
+
+@Component({
+  selector: 'app-my-map',
+  templateUrl: './my-map.component.html',
+  styleUrls: ['./my-map.component.scss']
+})
+export class MyMapComponent implements OnInit, AfterViewInit {
+
+  @ViewChild('map')
+  private mapContainer: ElementRef<HTMLElement>;
+
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+  ngAfterViewInit() {
+    const initialState = {
+      lng: 11,
+      lat: 49,
+      zoom: 4
+    };
+
+    const myAPIKey = 'YOUR_API_KEY_HERE';
+    const mapStyle = 'https://maps.geoapify.com/v1/styles/osm-carto/style.json';
+
+    olms(this.mapContainer.nativeElement, `${mapStyle}?apiKey=${myAPIKey}`).then((map: Map) => {
+      map.getView().setCenter(proj.transform([initialState.lng, initialState.lat], 'EPSG:4326', 'EPSG:3857'));
+      map.getView().setZoom(initialState.zoom);
+    });
+  }
+}
 
 ```
-
-
-
-
-
 5. Replace YOUR_API_KEY_HERE with an API key you've got on [Geoapify MyProjects](https://myprojects.geoapify.com).
 6. Set the mapStyle variable to [Map style](https://apidocs.geoapify.com/docs/maps/map-tiles/map-tiles) you want to use.
 
