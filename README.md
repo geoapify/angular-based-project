@@ -1,5 +1,5 @@
 ### Angular-based project skeleton for a map application by [Geoapify](https://www.geoapify.com)
-* This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.1.
+* This project was generated with [Angular CLI](https://github.com/angular/angular-cli).
 
 # STEP 1. Run the application
 1. [Clone or download](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository) the source code of the application to your computer.
@@ -30,10 +30,76 @@ You can use any text editor for writing HTML, CSS, and JavaScript/TypeScript. Ho
 
 # STEP 2 - Option 1. Display a map with [Mapbox GL](https://docs.mapbox.com/mapbox-gl-js/api/)
 1. Go to the application directory.
-2. Run `npm install mapbox-gl` to install Mapbox GL library.
+2. Run `npm install mapbox-gl @types/mapbox-gl` to install Mapbox GL library and TypeScript types.
+3. Add Mapbox GL styles. For example, in angular.json:
+```json
+"projects": {
+    "angular-project": {
+      ...
+      "architect": {
+        "build": {
+          "options": {
+            ...
+            "styles": [
+              "src/styles.scss",
+              "node_modules/mapbox-gl/dist/mapbox-gl.css"
+            ],
+            "scripts": []
+          },
+          ...
+        }
+      }
+    }
+}
+```
+**You will need to restart the dev server to apply changes from angular.json.**
+4. Remove the placeholder element from MyMapComponent and create a Mapbox GL map:
+```html
+<div class="map-container" #map></div>
+```
+```typescript
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Map } from 'mapbox-gl';
 
+@Component({
+  selector: 'app-my-map',
+  templateUrl: './my-map.component.html',
+  styleUrls: ['./my-map.component.scss']
+})
+export class MyMapComponent implements OnInit, AfterViewInit {
 
+  @ViewChild('map')
+  private mapContainer: ElementRef<HTMLElement>;
 
+  private map: Map;
+
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+  ngAfterViewInit() {
+    const myAPIKey = 'YOUR_API_KEY_HERE'; 
+    const mapStyle = 'https://maps.geoapify.com/v1/styles/osm-carto/style.json';
+
+    const initialState = {
+      lng: 11,
+      lat: 49,
+      zoom: 4
+    };
+
+    this.map = new Map({
+      container: this.mapContainer.nativeElement,
+      style: `${mapStyle}?apiKey=${myAPIKey}`,
+      center: [initialState.lng, initialState.lat],
+      zoom: initialState.zoom
+    });
+  }
+}
+
+```
+5. Replace YOUR_API_KEY_HERE with an API key you've got on [Geoapify MyProjects](https://myprojects.geoapify.com).
+6. Set the mapStyle variable to [Map style](https://apidocs.geoapify.com/docs/maps/map-tiles/map-tiles) you want to use.
 
 
 
@@ -41,12 +107,15 @@ You can use any text editor for writing HTML, CSS, and JavaScript/TypeScript. Ho
 1. Go to the application directory.
 2. Run `npm i leaflet mapbox-gl mapbox-gl-leaflet` to install Leaflet library and Mapbox GL Leaflet plugin to display vector maps. By default, Leaflet doesn't have the support of vector maps and map style.
 
-
+5. Replace YOUR_API_KEY_HERE with an API key you've got on [Geoapify MyProjects](https://myprojects.geoapify.com).
+6. Set the mapStyle variable to [Map style](https://apidocs.geoapify.com/docs/maps/map-tiles/map-tiles) you want to use.
 
 # STEP 2 - Option 3. Display a map with [OpenLayers](https://openlayers.org)
 1. Go to the application directory.
 2. Run `npm install ol ol-mapbox-style` to install OpenLayers library and Mapbox map style support.
 
+5. Replace YOUR_API_KEY_HERE with an API key you've got on [Geoapify MyProjects](https://myprojects.geoapify.com).
+6. Set the mapStyle variable to [Map style](https://apidocs.geoapify.com/docs/maps/map-tiles/map-tiles) you want to use.
 
 ## Build the application
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.

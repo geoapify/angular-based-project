@@ -1,11 +1,11 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'app-my-map',
   templateUrl: './my-map.component.html',
   styleUrls: ['./my-map.component.scss']
 })
-export class MyMapComponent implements OnInit {
+export class MyMapComponent implements OnInit, AfterViewInit {
 
   @ViewChild('map')
   private mapContainer: ElementRef<HTMLElement>;
@@ -15,4 +15,7 @@ export class MyMapComponent implements OnInit {
   ngOnInit() {
   }
 
+  ngAfterViewInit() {
+
+  }
 }
