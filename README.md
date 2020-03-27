@@ -53,6 +53,7 @@ You can use any text editor for writing HTML, CSS, and JavaScript/TypeScript. Ho
 }
 ```
 **You will need to restart the dev server to apply changes from angular.json.**
+
 4. Remove the placeholder element from MyMapComponent and create a Mapbox GL map:
 ```html
 <div class="map-container" #map></div>
@@ -101,18 +102,131 @@ export class MyMapComponent implements OnInit, AfterViewInit {
 5. Replace YOUR_API_KEY_HERE with an API key you've got on [Geoapify MyProjects](https://myprojects.geoapify.com).
 6. Set the mapStyle variable to [Map style](https://apidocs.geoapify.com/docs/maps/map-tiles/map-tiles) you want to use.
 
-
-
 # STEP 2 - Option 2. Display a map with [Leaflet](https://leafletjs.com/)
 1. Go to the application directory.
-2. Run `npm i leaflet mapbox-gl mapbox-gl-leaflet` to install Leaflet library and Mapbox GL Leaflet plugin to display vector maps. By default, Leaflet doesn't have the support of vector maps and map style.
+2. Run `npm i leaflet mapbox-gl mapbox-gl-leaflet @types/leaflet @types/mapbox-gl-leaflet` to install Leaflet library + TypeScript types and Mapbox GL Leaflet plugin to display vector maps. By default, Leaflet doesn't have the support of vector maps and map style.
+3. Add Leaflet and Mapbox GL styles. For example, in angular.json:
+```json
+"projects": {
+    "angular-project": {
+      ...
+      "architect": {
+        "build": {
+          "options": {
+            ...
+            "styles": [
+              "src/styles.scss",
+              "node_modules/mapbox-gl/dist/mapbox-gl.css",
+              "node_modules/leaflet/dist/leaflet.css"
+            ],
+            "scripts": []
+          },
+          ...
+        }
+      }
+    }
+}
+```
+**You will need to restart the dev server to apply changes from angular.json.**
+4. Remove the placeholder element from MyMapComponent and create a Mapbox GL map:
+```html
+<div class="map-container" #map></div>
+```
+```typescript
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import  * as L from 'leaflet';
+import 'mapbox-gl-leaflet';
+@Component({
+  selector: 'app-my-map',
+  templateUrl: './my-map.component.html',
+  styleUrls: ['./my-map.component.scss']
+})
+export class MyMapComponent implements OnInit, AfterViewInit {
 
+  private map: L.Map;
+
+  @ViewChild('map')
+  private mapContainer: ElementRef<HTMLElement>;
+
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+  ngAfterViewInit() {
+    const myAPIKey = "YOUR_API_KEY_HERE";
+    const mapStyle = "https://maps.geoapify.com/v1/styles/osm-carto/style.json";
+
+    const initialState = {
+      lng: 11,
+      lat: 49,
+      zoom: 4
+    };
+
+    const map = new L.Map(this.mapContainer.nativeElement).setView(
+      [initialState.lat, initialState.lng],
+      initialState.zoom
+    );
+
+    // the attribution is required for the Geoapify Free tariff plan
+    map.attributionControl
+      .setPrefix("")
+      .addAttribution(
+        'Powered by <a href="https://www.geoapify.com/" target="_blank">Geoapify</a> | © OpenStreetMap <a href="https://www.openstreetmap.org/copyright" target="_blank">contributors</a>'
+      );
+
+    L.mapboxGL({
+      style: `${mapStyle}?apiKey=${myAPIKey}`,
+      accessToken: "no-token"
+    }).addTo(map);
+  }
+}
+```
 5. Replace YOUR_API_KEY_HERE with an API key you've got on [Geoapify MyProjects](https://myprojects.geoapify.com).
 6. Set the mapStyle variable to [Map style](https://apidocs.geoapify.com/docs/maps/map-tiles/map-tiles) you want to use.
 
 # STEP 2 - Option 3. Display a map with [OpenLayers](https://openlayers.org)
 1. Go to the application directory.
 2. Run `npm install ol ol-mapbox-style` to install OpenLayers library and Mapbox map style support.
+
+
+
+
+
+3. Add Leaflet and Mapbox GL styles. For example, in angular.json:
+```json
+"projects": {
+    "angular-project": {
+      ...
+      "architect": {
+        "build": {
+          "options": {
+            ...
+            "styles": [
+              "src/styles.scss",
+              "node_modules/mapbox-gl/dist/mapbox-gl.css",
+              "node_modules/leaflet/dist/leaflet.css"
+            ],
+            "scripts": []
+          },
+          ...
+        }
+      }
+    }
+}
+```
+**You will need to restart the dev server to apply changes from angular.json.**
+4. Remove the placeholder element from MyMapComponent and create a Mapbox GL map:
+```html
+<div class="map-container" #map></div>
+```
+```typescript
+
+```
+
+
+
+
 
 5. Replace YOUR_API_KEY_HERE with an API key you've got on [Geoapify MyProjects](https://myprojects.geoapify.com).
 6. Set the mapStyle variable to [Map style](https://apidocs.geoapify.com/docs/maps/map-tiles/map-tiles) you want to use.
