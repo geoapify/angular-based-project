@@ -7,6 +7,9 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 })
 export class MyMapComponent implements OnInit {
 
+  @ViewChild('map')
+  private mapContainer: ElementRef<HTMLElement>;
+
   constructor() { }
 
   ngOnInit() {
